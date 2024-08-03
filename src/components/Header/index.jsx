@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import MapPopup from '../MapPopUp';
 import './index.scss';
+import DateSlider from '../DateSlider';
 
-const Header = ({ coordinates, changeLocation }) => {
+const Header = ({ changeLocation, selectedDate, onChangeDate }) => {
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   const openMap = () => setIsMapOpen(true);
@@ -11,22 +12,19 @@ const Header = ({ coordinates, changeLocation }) => {
 
   return (
     <div className="header">
-      <h1>Previsiones Pesca</h1>
-      <div>
-        <button type="button" className="location-button" onClick={openMap}>
-          Seleccionar Ubicación
-        </button>
-        {isMapOpen && (
+      <div className="top">
+        <h1 className="header-title">Previsiones Pesca</h1>
+        <div className="header-content">
+          <button type="button" className="location-button" onClick={openMap}>
+            Seleccionar Ubicación
+          </button>
+          {isMapOpen && (
           <MapPopup setCoordinates={changeLocation} onClose={closeMap} />
-        )}
+          )}
+        </div>
       </div>
-      <div className="coordinates">
-        Coordenadas seleccionadas: Latitud:
-        {' '}
-        <span>{coordinates.lat}</span>
-        , Longitud:
-        {' '}
-        <span>{coordinates.lng}</span>
+      <div className="bottom">
+        <DateSlider onChange={onChangeDate} selectedDate={selectedDate} />
       </div>
     </div>
   );
@@ -38,6 +36,8 @@ Header.propTypes = {
     lng: PropTypes.number,
   }).isRequired,
   changeLocation: PropTypes.func.isRequired,
+  selectedDate: PropTypes.instanceOf(Date).isRequired,
+  onChangeDate: PropTypes.func.isRequired,
 };
 
 export default Header;

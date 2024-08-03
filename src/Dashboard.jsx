@@ -3,7 +3,6 @@ import Header from './components/Header';
 import WindyMap from './components/WindyMap';
 import AemetImage from './components/AemetImage';
 import ElTiempoImage from './components/ElTiempoImage';
-import DateSlider from './components/DateSlider';
 
 const getClosestHour = (date) => {
   const hoursArray = [2, 5, 8, 11, 14, 17, 20, 23];
@@ -29,8 +28,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <Header coordinates={coordinates} changeLocation={changeLocation} />
-      <DateSlider selectedDate={selectedDate} onChange={setSelectedDate} />
+      <Header coordinates={coordinates} changeLocation={changeLocation} selectedDate={selectedDate} onChangeDate={setSelectedDate} />
       <div className="maps">
         <WindyMap lat={coordinates.lat} lng={coordinates.lng} date={selectedDate} />
         <AemetImage date={selectedDate} />

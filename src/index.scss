@@ -14,8 +14,20 @@ code {
 
 .dashboard {
   .maps {
+    margin-top: 100px; /* Ajusta esto para que coincida con la altura del header */
     display: flex;
     width: 100%;
     flex-wrap: wrap;
+    img {
+      object-fit: contain;
+    }
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .dashboard .maps {
+    * {
+      width: 100%;
+    }
   }
 }

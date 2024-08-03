@@ -7,6 +7,8 @@
 
   .days-row {
     display: flex;
+    margin-top: 4px;
+    margin-bottom: 4px;
   }
 
   .day-column {
@@ -22,7 +24,8 @@
 
   .day-label {
     font-weight: bold;
-    padding: 4px 0;
+    padding: 2px 0;
+    font-size: 12px;
   }
 
   .hours-row {
