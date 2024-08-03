@@ -5,8 +5,22 @@ import AemetImage from './components/AemetImage';
 import ElTiempoImage from './components/ElTiempoImage';
 import DateSlider from './components/DateSlider';
 
+const getClosestHour = (date) => {
+  const hoursArray = [2, 5, 8, 11, 14, 17, 20, 23];
+  const currentHour = date.getHours();
+  const closestHour = hoursArray.reduce((prev, curr) => (Math.abs(curr - currentHour) < Math.abs(prev - currentHour) ? curr : prev));
+
+  const closestDate = new Date(date);
+  closestDate.setHours(closestHour, 0, 0, 0);
+  return closestDate;
+};
+
 const Dashboard = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const now = new Date();
+    return getClosestHour(now);
+  });
+
   const [coordinates, setCoordinates] = useState({ lat: 39.36628848860643, lng: 2.590713500976563 });
 
   const changeLocation = (newCoordinates) => {
