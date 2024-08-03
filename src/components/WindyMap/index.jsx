@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import './index.scss';
 
 const overlayOptions = [
   'waves',
@@ -17,15 +18,24 @@ const WindyMap = ({
   lat, lng, date, overlay,
 }) => {
   const dateStr = date ? date.toISOString().split('T')[0] : '';
-  const url = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=true${dateStr ? `&date=${dateStr}` : ''}`;
+
+  const urlWithDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=true${dateStr ? `&date=${dateStr}` : ''}`;
+
+  const urlWithoutDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=false${dateStr ? `&date=${dateStr}` : ''}`;
 
   return (
-    <iframe
-      title="Windy"
-      width="100%"
-      height="600px"
-      src={url}
-    />
+    <div className="windy-maps-container">
+      <iframe
+        title="WindyMapWithDetail"
+        className="windy-map"
+        src={urlWithDetail}
+      />
+      <iframe
+        title="WindyMapWithoutDetail"
+        className="windy-map"
+        src={urlWithoutDetail}
+      />
+    </div>
   );
 };
 
