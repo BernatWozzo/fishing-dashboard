@@ -15,13 +15,11 @@ const overlayOptions = [
 ];
 
 const WindyMap = ({
-  lat, lng, date, overlay,
+  lat, lng, overlay,
 }) => {
-  const dateStr = date ? date.toISOString().split('T')[0] : '';
+  const urlWithDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=true`;
 
-  const urlWithDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=true${dateStr ? `&date=${dateStr}` : ''}`;
-
-  const urlWithoutDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=false${dateStr ? `&date=${dateStr}` : ''}`;
+  const urlWithoutDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=false`;
 
   return (
     <div className="windy-maps-container">
@@ -42,13 +40,11 @@ const WindyMap = ({
 WindyMap.propTypes = {
   lat: PropTypes.number.isRequired,
   lng: PropTypes.number.isRequired,
-  date: PropTypes.instanceOf(Date),
   overlay: PropTypes.oneOf(overlayOptions),
 };
 
 WindyMap.defaultProps = {
   overlay: 'waves',
-  date: null,
 };
 
 export default WindyMap;
