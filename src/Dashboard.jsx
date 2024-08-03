@@ -30,8 +30,8 @@ const Dashboard = () => {
     <div className="dashboard">
       <Header coordinates={coordinates} changeLocation={changeLocation} selectedDate={selectedDate} onChangeDate={setSelectedDate} />
       <div className="maps">
-        <WindyMap lat={coordinates.lat} lng={coordinates.lng} date={selectedDate} />
         <AemetImage date={selectedDate} />
+        <WindyMap lat={coordinates.lat} lng={coordinates.lng} date={selectedDate} />
         <ElTiempoImage date={selectedDate} />
       </div>
     </div>
