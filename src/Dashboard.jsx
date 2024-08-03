@@ -28,12 +28,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
+    <div className="dashboard">
       <Header coordinates={coordinates} changeLocation={changeLocation} />
       <DateSlider selectedDate={selectedDate} onChange={setSelectedDate} />
-      <WindyMap lat={coordinates.lat} lng={coordinates.lng} date={selectedDate} />
-      <AemetImage date={selectedDate} />
-      <ElTiempoImage date={selectedDate} />
+      <div className="maps">
+        <WindyMap lat={coordinates.lat} lng={coordinates.lng} date={selectedDate} />
+        <AemetImage date={selectedDate} />
+        <ElTiempoImage date={selectedDate} />
+      </div>
     </div>
   );
 };

@@ -19,7 +19,7 @@ const WindyMap = ({
 }) => {
   const urlWithDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=true`;
 
-  const urlWithoutDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=false`;
+  // const urlWithoutDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=false`;
 
   return (
     <div className="windy-maps-container">
@@ -28,11 +28,11 @@ const WindyMap = ({
         className="windy-map"
         src={urlWithDetail}
       />
-      <iframe
+      {/* <iframe
         title="WindyMapWithoutDetail"
         className="windy-map"
         src={urlWithoutDetail}
-      />
+      /> */}
     </div>
   );
 };
