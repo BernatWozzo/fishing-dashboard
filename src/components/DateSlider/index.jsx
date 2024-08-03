@@ -84,12 +84,18 @@ const DateSlider = ({ selectedDate, onChange }) => {
   const handleArrowNavigation = (direction) => {
     const currentIndex = marks.findIndex((mark) => mark.date.getTime() === selectedCell.getTime());
     if (currentIndex !== -1) {
-      const newIndex = direction === 'left' ? currentIndex - 1 : currentIndex + 1;
-      if (marks[newIndex]) {
-        const newDate = marks[newIndex].date;
-        setSelectedCell(newDate);
-        onChange(newDate);
+      let newIndex = direction === 'left' ? currentIndex - 1 : currentIndex + 1;
+
+      // Asegurarnos de que el nuevo índice está dentro del rango válido
+      if (newIndex < 0) {
+        newIndex = 0;
+      } else if (newIndex >= marks.length) {
+        newIndex = marks.length - 1;
       }
+
+      const newDate = marks[newIndex].date;
+      setSelectedCell(newDate);
+      onChange(newDate);
     }
   };
 
