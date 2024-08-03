@@ -1,29 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { LunarPhase, Moon, Hemisphere } from 'lunarphase-js';
 import PropTypes from 'prop-types';
+import { LunarPhase, Moon, Hemisphere } from 'lunarphase-js';
 import './index.scss';
+import { calculateIllumination } from '../../utils';
 
 const hoursOfDay = [2, 5, 8, 11, 14, 17, 20, 23];
-
-// Función para calcular la iluminación lunar basada en fórmulas astronómicas estándar
-export const calculateIllumination = (date) => {
-  const diff = date - new Date('2001-01-01T00:00:00Z');
-  const days = diff / 1000 / 60 / 60 / 24;
-  const synodicMonth = 29.53058867;
-  const newMoons = days / synodicMonth;
-  const phase = newMoons - Math.floor(newMoons);
-  const illumination = 0.5 * (1 - Math.cos(phase * 2 * Math.PI));
-  return illumination * 100;
-};
 
 const getFishingProbability = (illumination, phase, hour) => {
   const isDaytime = hour >= 6 && hour < 18;
 
-  if (phase === LunarPhase.FULL && isDaytime) return 'Baja';
-  if (phase === LunarPhase.NEW && !isDaytime) return 'Baja';
+  if (phase === LunarPhase.FULL && isDaytime) return 'Baja'; // Durante el día de la luna llena, la probabilidad es baja.
+  if (phase === LunarPhase.NEW && isDaytime) return 'Alta'; // Durante el día de la luna nueva, la probabilidad es alta.
+  if (phase === LunarPhase.NEW && !isDaytime) return 'Alta'; // Durante la noche de la luna nueva, la probabilidad es alta.
   if (illumination > 60) return 'Alta'; // Ajuste para más "Altas"
   if (illumination > 20 && illumination <= 60) return 'Media'; // Ajuste para más "Medias"
-  return 'Baja';
+  return 'Baja'; // Todo lo demás es baja probabilidad.
 };
 
 const getCellStyle = (probability) => {
@@ -37,6 +28,13 @@ const getCellStyle = (probability) => {
     default:
       return {};
   }
+};
+
+const getAverageProbability = (probabilities) => {
+  const values = { Alta: 100, Media: 50, Baja: 0 };
+  const total = probabilities.length;
+  const sum = probabilities.reduce((acc, prob) => acc + values[prob], 0);
+  return (sum / total).toFixed(2);
 };
 
 const DateSlider = ({ selectedDate, onChange }) => {
@@ -122,30 +120,39 @@ const DateSlider = ({ selectedDate, onChange }) => {
   return (
     <div className="date-slider">
       <div className="days-row">
-        {Object.keys(groupedMarks).map((day, index) => (
-          <div key={index} className="day-column">
-            <div className="day-label">
-              {day}
-              {' '}
-              {groupedMarks[day][0].phaseEmoji}
+        {Object.keys(groupedMarks).map((day, index) => {
+          const dailyProbabilities = groupedMarks[day].map((mark) => mark.probability);
+          const averageProbability = getAverageProbability(dailyProbabilities);
+
+          return (
+            <div key={index} className="day-column">
+              <div className="day-label">
+                {day}
+                {' '}
+                {groupedMarks[day][0].phaseEmoji}
+                {' '}
+                (
+                {averageProbability}
+                )
+              </div>
+              <div className="hours-row">
+                {groupedMarks[day].map((mark, idx) => (
+                  <div
+                    key={idx}
+                    className={`hour-cell ${selectedCell && selectedCell.getTime() === mark.date.getTime() ? 'selected' : ''}`}
+                    style={getCellStyle(mark.probability)}
+                    onClick={() => handleCellClick(mark.date)}
+                    onKeyDown={(e) => handleKeyDown(e, mark.date)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    {mark.hourLabel}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="hours-row">
-              {groupedMarks[day].map((mark, idx) => (
-                <div
-                  key={idx}
-                  className={`hour-cell ${selectedCell && selectedCell.getTime() === mark.date.getTime() ? 'selected' : ''}`}
-                  style={getCellStyle(mark.probability)}
-                  onClick={() => handleCellClick(mark.date)}
-                  onKeyDown={(e) => handleKeyDown(e, mark.date)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  {mark.hourLabel}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
