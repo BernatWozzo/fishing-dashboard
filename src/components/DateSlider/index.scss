@@ -42,13 +42,12 @@
     border: 1px solid #ddd;
     cursor: pointer;
     text-align: center;
-    min-width: 20px; /* Adjust this value as needed */
+    min-width: 20px;
     font-size: 10px;
   }
 
   .hour-cell.selected {
-    background-color: #007bff;
-    color: white;
+    outline: 2px solid #007bff;
   }
 
   .hour-cell:focus {
