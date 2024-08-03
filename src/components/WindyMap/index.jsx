@@ -22,8 +22,8 @@ const WindyMap = ({
   return (
     <iframe
       title="Windy"
-      width="650"
-      height="450"
+      width="100%"
+      height="600px"
       src={url}
     />
   );

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import MapPopup from '../MapPopUp';
+import './index.scss';
 
 const Header = ({ coordinates, changeLocation }) => {
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -9,21 +10,23 @@ const Header = ({ coordinates, changeLocation }) => {
   const closeMap = () => setIsMapOpen(false);
 
   return (
-    <div>
+    <div className="header">
       <h1>Previsiones Pesca</h1>
       <div>
-        <button type="button" onClick={openMap}>Seleccionar Ubicación</button>
+        <button type="button" className="location-button" onClick={openMap}>
+          Seleccionar Ubicación
+        </button>
         {isMapOpen && (
           <MapPopup setCoordinates={changeLocation} onClose={closeMap} />
         )}
       </div>
-      <div>
+      <div className="coordinates">
         Coordenadas seleccionadas: Latitud:
         {' '}
-        {coordinates.lat}
+        <span>{coordinates.lat}</span>
         , Longitud:
         {' '}
-        {coordinates.lng}
+        <span>{coordinates.lng}</span>
       </div>
     </div>
   );

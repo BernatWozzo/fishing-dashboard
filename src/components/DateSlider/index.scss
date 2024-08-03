@@ -1,0 +1,55 @@
+.date-slider {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  .days-row {
+    display: flex;
+  }
+
+  .day-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+
+    &:nth-child(odd) {
+      background-color: #e6f7ff; /* Very light blue background */
+    }
+  }
+
+  .day-label {
+    font-weight: bold;
+    padding: 4px 0;
+  }
+
+  .hours-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+
+  .hour-cell {
+    flex: 1;
+    padding: 4px;
+    margin: 2px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    text-align: center;
+    min-width: 20px; /* Adjust this value as needed */
+    font-size: 10px;
+  }
+
+  .hour-cell.selected {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .hour-cell:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #0056b3;
+  }
+}
