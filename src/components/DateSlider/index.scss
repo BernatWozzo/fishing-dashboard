@@ -68,14 +68,10 @@
     font-size: 10px;
     color: white;
     border-radius: 4px;
+    scroll-snap-align: start;
   }
 
   .hour-cell.selected {
     outline: 2px solid #007bff;
-  }
-
-  .hour-cell:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #0056b3;
   }
 }
