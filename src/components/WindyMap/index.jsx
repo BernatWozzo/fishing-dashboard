@@ -17,9 +17,7 @@ const overlayOptions = [
 const WindyMap = ({
   lat, lng, overlay,
 }) => {
-  const urlWithDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=true`;
-
-  // const urlWithoutDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=11&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=false`;
+  const urlWithDetail = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=kt&zoom=10&overlay=${overlay}&product=ecmwf&level=surface&lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&detail=true&pressure=true&message=true`;
 
   return (
     <div className="windy-maps-container">
@@ -28,11 +26,6 @@ const WindyMap = ({
         className="windy-map"
         src={urlWithDetail}
       />
-      {/* <iframe
-        title="WindyMapWithoutDetail"
-        className="windy-map"
-        src={urlWithoutDetail}
-      /> */}
     </div>
   );
 };
