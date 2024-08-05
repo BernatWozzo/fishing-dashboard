@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { LunarPhase, Moon, Hemisphere } from 'lunarphase-js';
 import './index.scss';
@@ -13,7 +13,7 @@ const getFishingProbability = (illumination, phase, hour) => {
   if (phase === LunarPhase.FULL) {
     probability = isDaytime ? 20 : 80; // 20 de día, 80 de noche
   } else if (phase === LunarPhase.NEW) {
-    probability = isDaytime ? 90 : 90; // 90 de día y de noche
+    probability = 90; // 90 de día y de noche
   } else if (phase === LunarPhase.FIRST_QUARTER || phase === LunarPhase.LAST_QUARTER) {
     if (isDaytime) {
       probability = illumination > 60 ? 70 : 50; // 70 si la iluminación es alta, 50 si es media
@@ -51,6 +51,13 @@ const getAverageProbability = (probabilities) => {
 const DateSlider = ({ selectedDate, onChange }) => {
   const [marks, setMarks] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+  const selectedCellRef = useRef(selectedCell);
+
+  useEffect(() => {
+    selectedCellRef.current = selectedCell;
+  }, [selectedCell]);
 
   const generateMarks = () => {
     const now = new Date();
@@ -134,8 +141,47 @@ const DateSlider = ({ selectedDate, onChange }) => {
     return acc;
   }, {});
 
+  const startPlaying = () => {
+    setIsPlaying(true);
+    const id = setInterval(() => {
+      const currentIndex = marks.findIndex((mark) => mark.date.getTime() === selectedCellRef.current.getTime());
+      if (currentIndex !== -1) {
+        let newIndex = currentIndex + 1;
+
+        if (newIndex >= marks.length) {
+          newIndex = marks.length - 1;
+        }
+
+        const newDate = marks[newIndex].date;
+        setSelectedCell(newDate);
+        onChange(newDate);
+      }
+    }, 300);
+    setIntervalId(id);
+  };
+
+  const stopPlaying = () => {
+    setIsPlaying(false);
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+  };
+
   return (
     <div className="date-slider">
+      <div className="controls">
+        <button type="button" onClick={isPlaying ? stopPlaying : startPlaying}>
+          {isPlaying ? (
+            <svg viewBox="0 0 24 24">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          )}
+        </button>
+      </div>
       <div className="days-row">
         {Object.keys(groupedMarks).map((day, index) => {
           const dailyProbabilities = groupedMarks[day].map((mark) => mark.probability);
