@@ -75,7 +75,7 @@ const DateSlider = ({ selectedDate, onChange }) => {
       const probability = getFishingProbability(illumination, phase, hour);
 
       return {
-        dayLabel: day.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'short' }),
+        dayLabel: day.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }),
         hourLabel: `${hour}`,
         date,
         phaseEmoji,
