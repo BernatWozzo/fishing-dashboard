@@ -5,7 +5,7 @@ import { Marker, useMapEvents } from 'react-leaflet';
 const LocationMarker = ({ setCoordinates }) => {
   const [position, setPosition] = useState(null);
 
-  const map = useMapEvents({
+  useMapEvents({
     click(e) {
       setPosition(e.latlng);
       setCoordinates(e.latlng);
