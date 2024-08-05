@@ -5,7 +5,9 @@ import MapPopup from '../MapPopUp';
 import './index.scss';
 import DateSlider from '../DateSlider';
 
-const Header = ({ changeLocation, selectedDate, onChangeDate }) => {
+const Header = ({
+  changeLocation, selectedDate, onChangeDate, coordinates,
+}) => {
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   const openMap = () => setIsMapOpen(true);
@@ -26,7 +28,7 @@ const Header = ({ changeLocation, selectedDate, onChangeDate }) => {
 
           </button>
           {isMapOpen && (
-          <MapPopup setCoordinates={changeLocation} onClose={closeMap} />
+          <MapPopup setCoordinates={changeLocation} onClose={closeMap} coordinates={coordinates} />
           )}
         </div>
       </div>

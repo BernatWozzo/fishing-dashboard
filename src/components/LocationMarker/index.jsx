@@ -1,24 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Marker, useMapEvents } from 'react-leaflet';
+import { CircleMarker, useMapEvents } from 'react-leaflet';
 
-const LocationMarker = ({ setCoordinates }) => {
-  const [position, setPosition] = useState(null);
-
+const LocationMarker = ({ setCoordinates, coordinates }) => {
   useMapEvents({
     click(e) {
-      setPosition(e.latlng);
       setCoordinates(e.latlng);
     },
   });
 
-  return position === null ? null : (
-    <Marker position={position} />
+  return coordinates === null ? null : (
+    <CircleMarker
+      center={coordinates}
+      radius={5} // Adjust size as needed
+      fillColor="#007bff" // Adjust color as needed
+      color="#007bff" // Border color
+      fillOpacity={0.8} // Adjust opacity as needed
+    />
   );
 };
 
 LocationMarker.propTypes = {
   setCoordinates: PropTypes.func.isRequired,
+  coordinates: PropTypes.shape({
+    lat: PropTypes.number,
+    lng: PropTypes.number,
+  }).isRequired,
 };
 
 export default LocationMarker;
