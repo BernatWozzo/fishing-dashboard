@@ -8,33 +8,44 @@ const hoursOfDay = [2, 5, 8, 11, 14, 17, 20, 23];
 
 const getFishingProbability = (illumination, phase, hour) => {
   const isDaytime = hour >= 6 && hour < 18;
+  let probability;
 
-  if (phase === LunarPhase.FULL && isDaytime) return 'Baja'; // Durante el día de la luna llena, la probabilidad es baja.
-  if (phase === LunarPhase.NEW && isDaytime) return 'Alta'; // Durante el día de la luna nueva, la probabilidad es alta.
-  if (phase === LunarPhase.NEW && !isDaytime) return 'Alta'; // Durante la noche de la luna nueva, la probabilidad es alta.
-  if (illumination > 60) return 'Alta'; // Ajuste para más "Altas"
-  if (illumination > 20 && illumination <= 60) return 'Media'; // Ajuste para más "Medias"
-  return 'Baja'; // Todo lo demás es baja probabilidad.
+  if (phase === LunarPhase.FULL) {
+    probability = isDaytime ? 20 : 80; // 20 de día, 80 de noche
+  } else if (phase === LunarPhase.NEW) {
+    probability = isDaytime ? 90 : 90; // 90 de día y de noche
+  } else if (phase === LunarPhase.FIRST_QUARTER || phase === LunarPhase.LAST_QUARTER) {
+    if (isDaytime) {
+      probability = illumination > 60 ? 70 : 50; // 70 si la iluminación es alta, 50 si es media
+    } else {
+      probability = 70; // 70 de noche
+    }
+  } else if (illumination > 60) {
+    probability = 85; // Alta probabilidad si la iluminación es alta
+  } else if (illumination > 20 && illumination <= 60) {
+    probability = 60; // Media probabilidad
+  } else {
+    probability = 30; // Baja probabilidad
+  }
+
+  return probability;
 };
 
 const getCellStyle = (probability) => {
-  switch (probability) {
-    case 'Alta':
-      return { backgroundColor: 'green' };
-    case 'Media':
-      return { backgroundColor: 'yellow' };
-    case 'Baja':
-      return { backgroundColor: 'red' };
-    default:
-      return {};
+  if (probability >= 80) {
+    return { backgroundColor: '#4CAF50' }; // Verde (80-100)
+  } if (probability >= 60) {
+    return { backgroundColor: 'yellow' }; // Amarillo (60-79)
+  } if (probability >= 40) {
+    return { backgroundColor: 'orange' }; // Naranja (40-59)
   }
+  return { backgroundColor: 'red' }; // Rojo (0-39)
 };
 
 const getAverageProbability = (probabilities) => {
-  const values = { Alta: 100, Media: 50, Baja: 0 };
   const total = probabilities.length;
-  const sum = probabilities.reduce((acc, prob) => acc + values[prob], 0);
-  return (sum / total).toFixed(2);
+  const sum = probabilities.reduce((acc, prob) => acc + prob, 0);
+  return `${sum / total}%`;
 };
 
 const DateSlider = ({ selectedDate, onChange }) => {
