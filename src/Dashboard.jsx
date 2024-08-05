@@ -20,10 +20,14 @@ const Dashboard = () => {
     return getClosestHour(now);
   });
 
-  const [coordinates, setCoordinates] = useState({ lat: 39.36628848860643, lng: 2.590713500976563 });
+  const [coordinates, setCoordinates] = useState(() => {
+    const savedCoordinates = localStorage.getItem('coordinates');
+    return savedCoordinates ? JSON.parse(savedCoordinates) : { lat: 39.36628848860643, lng: 2.590713500976563 };
+  });
 
   const changeLocation = (newCoordinates) => {
     setCoordinates(newCoordinates);
+    localStorage.setItem('coordinates', JSON.stringify(newCoordinates));
   };
 
   return (
