@@ -7,11 +7,16 @@ const AemetImage = ({ date }) => {
 
   useEffect(() => {
     const calculateOffset = (selectedDate) => {
-      // Date of the model run (today's date at 00:00 UTC)
       const modelRunDate = new Date();
       modelRunDate.setUTCHours(0, 0, 0, 0); // Set to midnight UTC of the current day
-      const diffInHours = Math.round((selectedDate - modelRunDate) / (1000 * 60 * 60));
-      return `+${diffInHours.toString().padStart(3, '0')}`;
+
+      const diffInMilliseconds = selectedDate - modelRunDate;
+      const diffInHours = Math.round(diffInMilliseconds / (1000 * 60 * 60));
+
+      // Round the hours to the nearest multiple of 3
+      const roundedHours = Math.round(diffInHours / 3) * 3;
+
+      return `+${roundedHours.toString().padStart(3, '0')}`;
     };
 
     const modelRunDate = new Date();
