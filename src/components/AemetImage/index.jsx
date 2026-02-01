@@ -5,7 +5,6 @@ import './index.scss';
 const AemetImage = ({ date }) => {
   const [imageSrc, setImageSrc] = useState('');
   const [imageError, setImageError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   // Verifica si una imagen existe
   const checkImageExists = useCallback((url) => new Promise((resolve) => {
@@ -114,7 +113,6 @@ const AemetImage = ({ date }) => {
   }, [date, imageSrc, findBestImageUrl]);
 
   useEffect(() => {
-    setIsLoading(true);
     setImageError(false);
     findBestImageUrl(date).then((url) => {
       if (url) {
@@ -122,17 +120,8 @@ const AemetImage = ({ date }) => {
       } else {
         setImageError(true);
       }
-      setIsLoading(false);
     });
   }, [date, findBestImageUrl]);
-
-  if (isLoading) {
-    return (
-      <div className="aemet-image-container">
-        <div className="aemet-loading">Cargando imagen AEMET...</div>
-      </div>
-    );
-  }
 
   if (imageError || !imageSrc) {
     return (
