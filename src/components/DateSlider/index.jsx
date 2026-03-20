@@ -1,54 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useState, useEffect, useRef, useMemo,
+} from 'react';
 import PropTypes from 'prop-types';
-import { LunarPhase, Moon, Hemisphere } from 'lunarphase-js';
 import './index.scss';
-import { calculateIllumination } from '../../utils';
 
 const hoursOfDay = [2, 5, 8, 11, 14, 17, 20, 23];
+const WAVE_SAFE_THRESHOLD = 0.3;
 
-const getFishingProbability = (illumination, phase, hour) => {
-  const isDaytime = hour >= 6 && hour < 18;
-  let probability;
-
-  if (phase === LunarPhase.FULL) {
-    probability = isDaytime ? 20 : 80; // 20 de día, 80 de noche
-  } else if (phase === LunarPhase.NEW) {
-    probability = 90; // 90 de día y de noche
-  } else if (phase === LunarPhase.FIRST_QUARTER || phase === LunarPhase.LAST_QUARTER) {
-    if (isDaytime) {
-      probability = illumination > 60 ? 70 : 50; // 70 si la iluminación es alta, 50 si es media
-    } else {
-      probability = 70; // 70 de noche
-    }
-  } else if (illumination > 60) {
-    probability = 85; // Alta probabilidad si la iluminación es alta
-  } else if (illumination > 20 && illumination <= 60) {
-    probability = 60; // Media probabilidad
-  } else {
-    probability = 30; // Baja probabilidad
-  }
-
-  return probability;
-};
-
-const getCellStyle = (probability) => {
-  if (probability >= 80) {
-    return { backgroundColor: '#4CAF50' }; // Verde (80-100)
-  } if (probability >= 60) {
-    return { backgroundColor: 'yellow' }; // Amarillo (60-79)
-  } if (probability >= 40) {
-    return { backgroundColor: 'orange' }; // Naranja (40-59)
-  }
-  return { backgroundColor: 'red' }; // Rojo (0-39)
-};
-
-const getAverageProbability = (probabilities) => {
-  const total = probabilities.length;
-  const sum = probabilities.reduce((acc, prob) => acc + prob, 0);
-  return `${Math.round(sum / total)}%`;
-};
-
-const DateSlider = ({ selectedDate, onChange, dailyOutlook }) => {
+const DateSlider = ({
+  selectedDate,
+  onChange,
+  dailyOutlook,
+  hourlyForecast,
+}) => {
   const [marks, setMarks] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -69,17 +33,11 @@ const DateSlider = ({ selectedDate, onChange, dailyOutlook }) => {
 
     const marksArray = nextSevenDays.flatMap((day) => hoursOfDay.map((hour) => {
       const date = new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0);
-      const phase = Moon.lunarPhase(date);
-      const phaseEmoji = Moon.lunarPhaseEmoji(date, { hemisphere: Hemisphere.NORTHERN });
-      const illumination = calculateIllumination(date);
-      const probability = getFishingProbability(illumination, phase, hour);
 
       return {
         dayLabel: day.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }),
         hourLabel: `${hour}`,
         date,
-        phaseEmoji,
-        probability,
       };
     }));
 
@@ -146,6 +104,12 @@ const DateSlider = ({ selectedDate, onChange, dailyOutlook }) => {
     return accumulator;
   }, {});
 
+  const hourlyForecastByKey = useMemo(() => hourlyForecast.reduce((accumulator, hour) => {
+    const key = hour.date.getTime();
+    accumulator[key] = hour;
+    return accumulator;
+  }, {}), [hourlyForecast]);
+
   const startPlaying = () => {
     setIsPlaying(true);
     const id = setInterval(() => {
@@ -199,15 +163,8 @@ const DateSlider = ({ selectedDate, onChange, dailyOutlook }) => {
           )}
         </button>
       </div>
-      <div className="slider-legend" aria-label="Leyenda de probabilidad lunar">
-        <span className="legend-item high">Alta</span>
-        <span className="legend-item medium">Media</span>
-        <span className="legend-item low">Baja</span>
-      </div>
       <div className="days-row">
         {Object.keys(groupedMarks).map((day, index) => {
-          const dailyProbabilities = groupedMarks[day].map((mark) => mark.probability);
-          const averageProbability = getAverageProbability(dailyProbabilities);
           const dayDate = groupedMarks[day][0].date;
           const dayKey = dayDate.toLocaleDateString('sv-SE');
           const dayOutlook = dailyOutlookByKey[dayKey];
@@ -223,27 +180,47 @@ const DateSlider = ({ selectedDate, onChange, dailyOutlook }) => {
               >
                 {dayOutlook && <span className={`day-status-dot ${outlookStatusClass}`} />}
                 {day}
-                {' '}
-                {groupedMarks[day][0].phaseEmoji}
-                {' '}
-                (
-                {averageProbability}
-                )
               </button>
               <div className="hours-row">
                 {groupedMarks[day].map((mark, idx) => (
-                  <div
-                    key={idx}
-                    className={`hour-cell ${selectedCell && selectedCell.getTime() === mark.date.getTime() ? 'selected' : ''}`}
-                    style={getCellStyle(mark.probability)}
-                    onClick={() => handleCellClick(mark.date)}
-                    onKeyDown={(e) => handleKeyDown(e, mark.date)}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`${day} ${mark.hourLabel}:00 probabilidad ${Math.round(mark.probability)}%`}
-                  >
-                    {mark.hourLabel}
-                  </div>
+                  (() => {
+                    const hourData = hourlyForecastByKey[mark.date.getTime()];
+                    const waveHeight = typeof hourData?.waveHeightMeters === 'number' ? `${hourData.waveHeightMeters.toFixed(1)}m` : 'N/D';
+                    const stormProbability = typeof hourData?.stormProbability === 'number' ? `${Math.round(hourData.stormProbability)}%` : 'N/D';
+                    const windSpeed = typeof hourData?.windSpeedKnots === 'number' ? `${Math.round(hourData.windSpeedKnots)}kt` : 'N/D';
+                    const windDirectionDegrees = typeof hourData?.windDirectionDegrees === 'number'
+                      ? Math.round(hourData.windDirectionDegrees)
+                      : null;
+                    const isWaveSafe = typeof hourData?.waveHeightMeters === 'number'
+                      ? hourData.waveHeightMeters <= WAVE_SAFE_THRESHOLD
+                      : false;
+
+                    return (
+                      <div
+                        key={idx}
+                        className={`hour-cell ${isWaveSafe ? 'wave-safe' : 'wave-risk'} ${selectedCell && selectedCell.getTime() === mark.date.getTime() ? 'selected' : ''}`}
+                        onClick={() => handleCellClick(mark.date)}
+                        onKeyDown={(e) => handleKeyDown(e, mark.date)}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`${day} ${mark.hourLabel}:00 ola ${waveHeight} tormenta ${stormProbability} viento ${windSpeed} ${windDirectionDegrees ? `${windDirectionDegrees} grados` : ''}`}
+                      >
+                        <div className="hour-label">{`${mark.hourLabel}h`}</div>
+                        <div className="hour-meta">{`🌊 ${waveHeight}`}</div>
+                        <div className="hour-meta">{`⛈ ${stormProbability}`}</div>
+                        <div className="hour-meta wind-row">
+                          <span
+                            className="wind-arrow"
+                            style={{ transform: `rotate(${windDirectionDegrees || 0}deg)` }}
+                            aria-hidden="true"
+                          >
+                            ↑
+                          </span>
+                          <span>{windSpeed}</span>
+                        </div>
+                      </div>
+                    );
+                  })()
                 ))}
               </div>
             </div>
@@ -263,6 +240,18 @@ DateSlider.propTypes = {
     status: PropTypes.oneOf(['NO_SALIR', 'SALIDA_CONDICIONAL', 'SALIR']),
     bestScore: PropTypes.number,
   })).isRequired,
+  hourlyForecast: PropTypes.arrayOf(PropTypes.shape({
+    date: PropTypes.instanceOf(Date).isRequired,
+    waveHeightMeters: PropTypes.number,
+    windSpeedKnots: PropTypes.number,
+    windDirectionDegrees: PropTypes.number,
+    windGustKnots: PropTypes.number,
+    stormProbability: PropTypes.number,
+  })),
+};
+
+DateSlider.defaultProps = {
+  hourlyForecast: [],
 };
 
 export default DateSlider;

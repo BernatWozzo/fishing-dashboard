@@ -2,7 +2,7 @@ import { LunarPhase, Moon } from 'lunarphase-js';
 import { calculateIllumination } from '../utils';
 
 export const OFFSHORE_THRESHOLDS = {
-  maxWaveHeightMeters: 0.5,
+  maxWaveHeightMeters: 0.3,
   maxWindGustKnots: 25,
   maxStormProbability: 20,
 };
@@ -99,7 +99,6 @@ export const evaluateOffshoreHour = (hourlyData, date, thresholds = OFFSHORE_THR
   const status = totalScore >= 70 ? 'SALIR' : 'SALIDA_CONDICIONAL';
 
   const softReasons = [];
-  if (hourlyData.waveHeightMeters > 0.35) softReasons.push('Ola en rango exigente para offshore');
   if (hourlyData.windGustKnots > 20) softReasons.push('Rachas moderadas-altas');
   if (hourlyData.stormProbability > 10) softReasons.push('Riesgo de chubascos/tormenta moderado');
   if (typeof hourlyData.windDirectionDegrees === 'number' && isSouthernWind(hourlyData.windDirectionDegrees) && hourlyData.windSpeedKnots > 8) {
@@ -121,7 +120,7 @@ export const evaluateOffshoreHour = (hourlyData, date, thresholds = OFFSHORE_THR
   };
 };
 
-export const findBestWindow = (forecast, startDate, minWindowHours = 3) => {
+export const findBestWindow = (forecast, startDate, minWindowHours = 4) => {
   if (!forecast || forecast.length === 0) return null;
 
   const startTime = new Date(startDate).getTime();

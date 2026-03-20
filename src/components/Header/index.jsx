@@ -5,11 +5,16 @@ import './index.scss';
 import DateSlider from '../DateSlider';
 
 const Header = ({
-  selectedDate, onChangeDate, dailyOutlook,
+  selectedDate, onChangeDate, dailyOutlook, hourlyForecast,
 }) => (
   <div className="header">
     <div className="bottom">
-      <DateSlider onChange={onChangeDate} selectedDate={selectedDate} dailyOutlook={dailyOutlook} />
+      <DateSlider
+        onChange={onChangeDate}
+        selectedDate={selectedDate}
+        dailyOutlook={dailyOutlook}
+        hourlyForecast={hourlyForecast}
+      />
     </div>
   </div>
 );
@@ -23,6 +28,18 @@ Header.propTypes = {
     status: PropTypes.oneOf(['NO_SALIR', 'SALIDA_CONDICIONAL', 'SALIR']),
     bestScore: PropTypes.number,
   })).isRequired,
+  hourlyForecast: PropTypes.arrayOf(PropTypes.shape({
+    date: PropTypes.instanceOf(Date).isRequired,
+    waveHeightMeters: PropTypes.number,
+    windSpeedKnots: PropTypes.number,
+    windDirectionDegrees: PropTypes.number,
+    windGustKnots: PropTypes.number,
+    stormProbability: PropTypes.number,
+  })),
+};
+
+Header.defaultProps = {
+  hourlyForecast: [],
 };
 
 export default Header;

@@ -31,7 +31,7 @@ const Dashboard = () => {
     return savedCoordinates ? JSON.parse(savedCoordinates) : DEFAULT_FISHING_SPOT;
   });
 
-  const [windyOverlay, setWindyOverlay] = useState(() => localStorage.getItem('windyOverlay') || 'waves');
+  const [windyOverlay, setWindyOverlay] = useState('waves');
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   const changeLocation = (newCoordinates) => {
@@ -72,7 +72,7 @@ const Dashboard = () => {
   }, [evaluatedForecast, selectedDate]);
 
   const bestWindow = useMemo(
-    () => findBestWindow(evaluatedForecast, selectedDate, 3),
+    () => findBestWindow(evaluatedForecast, selectedDate, 4),
     [evaluatedForecast, selectedDate],
   );
 
@@ -96,7 +96,7 @@ const Dashboard = () => {
         const bestScore = Math.max(...dayHours.map((hour) => hour.decision.totalScore));
 
         let status = 'NO_SALIR';
-        if (salirHours >= 3) {
+        if (salirHours >= 4) {
           status = 'SALIR';
         } else if (salirHours > 0 || bestScore >= 60 || noSalirHours < dayHours.length) {
           status = 'SALIDA_CONDICIONAL';
@@ -117,6 +117,7 @@ const Dashboard = () => {
         selectedDate={selectedDate}
         onChangeDate={setSelectedDate}
         dailyOutlook={dailyOutlook}
+        hourlyForecast={evaluatedForecast}
       />
       <div className="dashboard-content">
         <aside className="dashboard-decision-panel-wrapper">
@@ -138,7 +139,7 @@ const Dashboard = () => {
           <div className="windy-overlay-controls">
             <span>Capa Windy</span>
             <select aria-label="Capa Windy" id="windyOverlay" value={windyOverlay} onChange={changeWindyOverlay}>
-              <option value="waves">Olas</option>
+              <option value="waves">Waves &amp; Tides</option>
               <option value="wind">Viento</option>
               <option value="currents">Corrientes</option>
               <option value="pressure">Presión</option>

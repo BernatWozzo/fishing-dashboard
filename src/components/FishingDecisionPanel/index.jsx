@@ -141,7 +141,7 @@ const FishingDecisionPanel = ({
             )
           </p>
         ) : (
-          <p>No hay ventana segura de al menos 3h en las próximas 72h.</p>
+          <p>No hay ventana segura de al menos 4h en las próximas 72h.</p>
         )}
         <small>
           Timezone de datos:
