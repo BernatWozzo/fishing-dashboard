@@ -1,11 +1,13 @@
 .aemet-image-container {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
-  width: 50%;
+  margin-top: 0;
+  width: 100%;
 }
 
 .aemet-image {
+  display: block;
   max-width: 100%;
   height: auto;
+  border-radius: 6px;
 }

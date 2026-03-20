@@ -1,11 +1,13 @@
 .eltiempo-image-container {
   display: flex;
   justify-content: center;
-  width: 50%;
-  margin-top: 20px;
+  width: 100%;
+  margin-top: 0;
 }
 
 .eltiempo-image {
+  display: block;
   max-width: 100%;
   height: auto;
+  border-radius: 6px;
 }

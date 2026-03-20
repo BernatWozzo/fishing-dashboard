@@ -1,0 +1,140 @@
+.fishing-decision-panel {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d7d7d7;
+  background-color: #f8f9fb;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .decision-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .decision-kicker {
+    margin: 0;
+    font-size: 11px;
+    color: #555;
+  }
+
+  .decision-timezone {
+    margin: 2px 0 0;
+    font-size: 10px;
+    color: #666;
+  }
+
+  .decision-status {
+    margin: 2px 0 0;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .decision-score {
+    text-align: right;
+    span {
+      display: block;
+      font-size: 10px;
+      color: #666;
+    }
+    strong {
+      font-size: 22px;
+      line-height: 1;
+    }
+  }
+
+  .decision-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    span {
+      margin: 0;
+      font-size: 12px;
+      background-color: #fff;
+      border: 1px solid #e2e2e2;
+      border-radius: 999px;
+      padding: 4px 8px;
+
+      strong {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .decision-reasons {
+    p {
+      margin: 0;
+      font-size: 12px;
+    }
+
+    .decision-reasons-title {
+      font-weight: 600;
+      margin-bottom: 0;
+    }
+  }
+
+  .decision-window {
+    p {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    small {
+      display: block;
+      margin-top: 2px;
+      color: #606060;
+      font-size: 10px;
+    }
+  }
+
+  &.no_salir {
+    border-color: #ff3b30;
+    background-color: #ffe8e8;
+    .decision-status,
+    .decision-score strong {
+      color: #e00000;
+    }
+  }
+
+  &.salida_condicional {
+    border-color: #ffcc00;
+    background-color: #fff8d6;
+    .decision-status,
+    .decision-score strong {
+      color: #c97a00;
+    }
+  }
+
+  &.salir {
+    border-color: #22c55e;
+    background-color: #e5ffed;
+    .decision-status,
+    .decision-score strong {
+      color: #0f9f3f;
+    }
+  }
+
+  &.loading,
+  &.error {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 900px) {
+  .fishing-decision-panel {
+    margin-top: 6px;
+
+    .decision-status {
+      font-size: 16px;
+    }
+
+    .decision-score strong {
+      font-size: 20px;
+    }
+  }
+}

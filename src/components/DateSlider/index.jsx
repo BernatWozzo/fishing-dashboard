@@ -45,10 +45,10 @@ const getCellStyle = (probability) => {
 const getAverageProbability = (probabilities) => {
   const total = probabilities.length;
   const sum = probabilities.reduce((acc, prob) => acc + prob, 0);
-  return `${sum / total}%`;
+  return `${Math.round(sum / total)}%`;
 };
 
-const DateSlider = ({ selectedDate, onChange }) => {
+const DateSlider = ({ selectedDate, onChange, dailyOutlook }) => {
   const [marks, setMarks] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -141,6 +141,11 @@ const DateSlider = ({ selectedDate, onChange }) => {
     return acc;
   }, {});
 
+  const dailyOutlookByKey = dailyOutlook.reduce((accumulator, dayInfo) => {
+    accumulator[dayInfo.dayKey] = dayInfo;
+    return accumulator;
+  }, {});
+
   const startPlaying = () => {
     setIsPlaying(true);
     const id = setInterval(() => {
@@ -167,6 +172,18 @@ const DateSlider = ({ selectedDate, onChange }) => {
     }
   };
 
+  const handleDayOutlookClick = (date) => {
+    const firstMarkOfDay = marks.find((mark) => (
+      mark.date.getFullYear() === date.getFullYear()
+      && mark.date.getMonth() === date.getMonth()
+      && mark.date.getDate() === date.getDate()
+    ));
+
+    if (firstMarkOfDay) {
+      handleCellClick(firstMarkOfDay.date);
+    }
+  };
+
   return (
     <div className="date-slider">
       <div className="controls">
@@ -182,14 +199,29 @@ const DateSlider = ({ selectedDate, onChange }) => {
           )}
         </button>
       </div>
+      <div className="slider-legend" aria-label="Leyenda de probabilidad lunar">
+        <span className="legend-item high">Alta</span>
+        <span className="legend-item medium">Media</span>
+        <span className="legend-item low">Baja</span>
+      </div>
       <div className="days-row">
         {Object.keys(groupedMarks).map((day, index) => {
           const dailyProbabilities = groupedMarks[day].map((mark) => mark.probability);
           const averageProbability = getAverageProbability(dailyProbabilities);
+          const dayDate = groupedMarks[day][0].date;
+          const dayKey = dayDate.toLocaleDateString('sv-SE');
+          const dayOutlook = dailyOutlookByKey[dayKey];
+          const outlookStatusClass = dayOutlook ? dayOutlook.status.toLowerCase() : 'sin-forecast';
 
           return (
-            <div key={index} className="day-column">
-              <div className="day-label">
+            <div key={index} className={`day-column ${outlookStatusClass}`}>
+              <button
+                type="button"
+                className="day-label"
+                onClick={() => handleDayOutlookClick(dayDate)}
+                aria-label={`${day}: ${dayOutlook ? dayOutlook.status.replace('_', ' ').toLowerCase() : 'sin forecast'} score ${dayOutlook ? dayOutlook.bestScore : '-'}`}
+              >
+                {dayOutlook && <span className={`day-status-dot ${outlookStatusClass}`} />}
                 {day}
                 {' '}
                 {groupedMarks[day][0].phaseEmoji}
@@ -197,7 +229,7 @@ const DateSlider = ({ selectedDate, onChange }) => {
                 (
                 {averageProbability}
                 )
-              </div>
+              </button>
               <div className="hours-row">
                 {groupedMarks[day].map((mark, idx) => (
                   <div
@@ -208,6 +240,7 @@ const DateSlider = ({ selectedDate, onChange }) => {
                     onKeyDown={(e) => handleKeyDown(e, mark.date)}
                     role="button"
                     tabIndex={0}
+                    aria-label={`${day} ${mark.hourLabel}:00 probabilidad ${Math.round(mark.probability)}%`}
                   >
                     {mark.hourLabel}
                   </div>
@@ -224,6 +257,12 @@ const DateSlider = ({ selectedDate, onChange }) => {
 DateSlider.propTypes = {
   selectedDate: PropTypes.instanceOf(Date).isRequired,
   onChange: PropTypes.func.isRequired,
+  dailyOutlook: PropTypes.arrayOf(PropTypes.shape({
+    dayKey: PropTypes.string,
+    date: PropTypes.instanceOf(Date),
+    status: PropTypes.oneOf(['NO_SALIR', 'SALIDA_CONDICIONAL', 'SALIR']),
+    bestScore: PropTypes.number,
+  })).isRequired,
 };
 
 export default DateSlider;

@@ -13,21 +13,103 @@ code {
 }
 
 .dashboard {
+  padding: 0 10px 12px;
+
+  .dashboard-content {
+    margin: 8px auto 0;
+    display: grid;
+    grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+  }
+
+  .dashboard-decision-panel-wrapper {
+    position: sticky;
+    top: 110px;
+
+    .location-sidebar-button {
+      width: 100%;
+      height: 34px;
+      border: none;
+      border-radius: 8px;
+      background: #007bff;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 6px;
+
+      &:hover {
+        background: #0062cc;
+      }
+    }
+
+    .windy-overlay-controls {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 4px 8px;
+
+      span {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      select {
+        height: 28px;
+        border: 1px solid #bbb;
+        border-radius: 4px;
+        background: white;
+        font-size: 13px;
+      }
+    }
+  }
+
   .maps {
-    margin-top: 100px; /* Ajusta esto para que coincida con la altura del header */
-    display: flex;
-    width: 100%;
-    flex-wrap: wrap;
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+
+    > *:nth-child(3) {
+      grid-column: 1 / -1;
+    }
+
     img {
       object-fit: contain;
+      width: 100%;
     }
   }
 }
 
 @media screen and (max-width: 900px) {
-  .dashboard .maps {
-    * {
-      width: 100%;
+  .dashboard {
+    .dashboard-content {
+      grid-template-columns: 1fr;
+      margin-top: 6px;
+    }
+
+    .dashboard-decision-panel-wrapper {
+      position: static;
+
+      .windy-overlay-controls {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    .maps {
+      grid-template-columns: 1fr;
+
+      > *:nth-child(3) {
+        grid-column: auto;
+      }
     }
   }
 }

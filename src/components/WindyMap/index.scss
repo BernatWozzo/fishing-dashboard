@@ -1,12 +1,19 @@
 .windy-maps-container {
   display: flex;
-  height: 600px;
+  height: 520px;
   width: 100%;
-  margin-top: 8px;
+  margin-top: 0;
 
   .windy-map {
     width: 100%;
     height: 100%;
     border: none;
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 900px) {
+  .windy-maps-container {
+    height: 420px;
   }
 }

@@ -25,6 +25,26 @@
   align-items: center;
 }
 
+.map-popup .spot-presets {
+  position: fixed;
+  top: 2%;
+  left: 2%;
+  z-index: 1000000;
+  display: flex;
+  gap: 6px;
+}
+
+.map-popup .preset-button {
+  background: #0a5db7;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .map-popup .close-button {
   align-self: flex-end;
   background: gray;
