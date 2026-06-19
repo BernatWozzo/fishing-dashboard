@@ -39,6 +39,40 @@
   }
 
   .day-column {
+    &.reliability-medium {
+      opacity: 0.85;
+    }
+
+    &.reliability-low {
+      opacity: 0.55;
+
+      .hour-cell {
+        background-image: repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 5px,
+          rgba(0, 0, 0, 0.04) 5px,
+          rgba(0, 0, 0, 0.04) 10px
+        );
+      }
+    }
+
+    .day-reliability-tag {
+      display: inline-block;
+      margin-left: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #b02a37;
+      background: #fdeaec;
+      border-radius: 4px;
+      padding: 1px 4px;
+      vertical-align: middle;
+    }
+  }
+
+  .day-column {
     display: flex;
     flex-direction: column;
     align-items: center;

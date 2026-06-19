@@ -3,9 +3,11 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import './index.scss';
+import { getReliabilityLevel } from '../../utils/forecastReliability';
 
 const hoursOfDay = [2, 5, 8, 11, 14, 17, 20, 23];
 const WAVE_SAFE_THRESHOLD = 0.3;
+const SLIDER_DAYS = 10;
 
 const DateSlider = ({
   selectedDate,
@@ -25,7 +27,7 @@ const DateSlider = ({
 
   const generateMarks = () => {
     const now = new Date();
-    const nextSevenDays = Array.from({ length: 30 }, (_, i) => {
+    const nextSevenDays = Array.from({ length: SLIDER_DAYS }, (_, i) => {
       const day = new Date(now);
       day.setDate(now.getDate() + i);
       return day;
@@ -169,17 +171,19 @@ const DateSlider = ({
           const dayKey = dayDate.toLocaleDateString('sv-SE');
           const dayOutlook = dailyOutlookByKey[dayKey];
           const outlookStatusClass = dayOutlook ? dayOutlook.status.toLowerCase() : 'sin-forecast';
+          const reliability = getReliabilityLevel(dayDate);
 
           return (
-            <div key={index} className={`day-column ${outlookStatusClass}`}>
+            <div key={index} className={`day-column ${outlookStatusClass} reliability-${reliability}`}>
               <button
                 type="button"
                 className="day-label"
                 onClick={() => handleDayOutlookClick(dayDate)}
-                aria-label={`${day}: ${dayOutlook ? dayOutlook.status.replace('_', ' ').toLowerCase() : 'sin forecast'} score ${dayOutlook ? dayOutlook.bestScore : '-'}`}
+                aria-label={`${day}: ${dayOutlook ? dayOutlook.status.replace('_', ' ').toLowerCase() : 'sin forecast'} score ${dayOutlook ? dayOutlook.bestScore : '-'}, fiabilidad ${reliability}`}
               >
                 {dayOutlook && <span className={`day-status-dot ${outlookStatusClass}`} />}
                 {day}
+                {reliability === 'low' && <span className="day-reliability-tag">poco fiable</span>}
               </button>
               <div className="hours-row">
                 {groupedMarks[day].map((mark, idx) => (

@@ -4,9 +4,11 @@ import WindyMap from './components/WindyMap';
 import AemetImage from './components/AemetImage';
 import ElTiempoImage from './components/ElTiempoImage';
 import FishingDecisionPanel from './components/FishingDecisionPanel';
+import NextGoodWindow from './components/NextGoodWindow';
 import MapPopup from './components/MapPopUp';
 import useMarineForecast from './hooks/useMarineForecast';
-import { evaluateOffshoreHour, findBestWindow } from './utils/offshoreScore';
+import { evaluateOffshoreHour, findBestWindow, findUpcomingWindows } from './utils/offshoreScore';
+import { reliableUntil } from './utils/forecastReliability';
 
 const DEFAULT_FISHING_SPOT = { lat: 39.353, lng: 2.572 };
 
@@ -76,6 +78,13 @@ const Dashboard = () => {
     [evaluatedForecast, selectedDate],
   );
 
+  const upcomingWindows = useMemo(
+    () => findUpcomingWindows(evaluatedForecast, new Date(), { minWindowHours: 3, maxAheadDays: 7 }),
+    [evaluatedForecast],
+  );
+
+  const reliableUntilDate = useMemo(() => reliableUntil(), []);
+
   const dailyOutlook = useMemo(() => {
     const groupedByDay = evaluatedForecast.reduce((accumulator, hour) => {
       const dayKey = hour.date.toLocaleDateString('sv-SE');
@@ -118,6 +127,13 @@ const Dashboard = () => {
         onChangeDate={setSelectedDate}
         dailyOutlook={dailyOutlook}
         hourlyForecast={evaluatedForecast}
+      />
+      <NextGoodWindow
+        loading={loading}
+        error={error}
+        windows={upcomingWindows}
+        reliableUntilDate={reliableUntilDate}
+        onSelectDate={setSelectedDate}
       />
       <div className="dashboard-content">
         <aside className="dashboard-decision-panel-wrapper">

@@ -1,0 +1,137 @@
+.next-good-window {
+  margin: 8px auto 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  &.loading,
+  &.error,
+  &.empty {
+    color: #555;
+    font-size: 14px;
+  }
+
+  &.error {
+    border-color: #f5c2c7;
+    background: #fff5f5;
+    color: #842029;
+  }
+
+  &.ok {
+    border-left: 5px solid #1a8f3c;
+  }
+
+  &.empty {
+    border-left: 5px solid #b02a37;
+  }
+
+  .ngw-headline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+
+    p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: #555;
+    }
+  }
+
+  .ngw-clickable {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover .ngw-main {
+      text-decoration: underline;
+    }
+  }
+
+  .ngw-emoji {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .ngw-kicker {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #777;
+    font-weight: 700;
+  }
+
+  .ngw-main {
+    display: block;
+    font-size: 18px;
+    color: #15331f;
+    text-transform: capitalize;
+  }
+
+  .ngw-meta {
+    display: block;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .ngw-more {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #e2e2e2;
+
+    .ngw-more-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  .ngw-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .ngw-chip {
+    border: 1px solid #cfe3d6;
+    background: #f1faf4;
+    color: #1a8f3c;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: capitalize;
+
+    &:hover {
+      background: #e3f4ea;
+    }
+  }
+
+  .ngw-reliable {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #888;
+    text-transform: capitalize;
+  }
+}
+
+@media (max-width: 640px) {
+  .next-good-window {
+    border-radius: 10px;
+    padding: 10px 12px;
+
+    .ngw-main {
+      font-size: 16px;
+    }
+  }
+}

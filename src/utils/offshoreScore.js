@@ -1,5 +1,6 @@
 import { LunarPhase, Moon } from 'lunarphase-js';
 import { calculateIllumination } from '../utils';
+import { isFishingHour } from './forecastReliability';
 
 export const OFFSHORE_THRESHOLDS = {
   maxWaveHeightMeters: 0.3,
@@ -171,4 +172,52 @@ export const findBestWindow = (forecast, startDate, minWindowHours = 4) => {
   }
 
   return bestWindow;
+};
+
+// Devuelve TODAS las ventanas viables (no solo la mejor) ordenadas por fecha de inicio,
+// restringidas al horario de pesca diurno y a un horizonte máximo en días.
+// Cada ventana: { start, end, averageScore, bestScore, hours }.
+export const findUpcomingWindows = (forecast, startDate, options = {}) => {
+  const { minWindowHours = 3, maxAheadDays = 7 } = options;
+  if (!forecast || forecast.length === 0) return [];
+
+  const startTime = new Date(startDate).getTime();
+  const endTime = startTime + maxAheadDays * 24 * 3600000;
+
+  const candidates = forecast.filter(
+    (hour) => hour.date.getTime() >= startTime
+      && hour.date.getTime() <= endTime
+      && isFishingHour(hour.date),
+  );
+
+  const windows = [];
+  let currentWindow = [];
+
+  const flush = () => {
+    if (currentWindow.length >= minWindowHours) {
+      const scores = currentWindow.map((item) => item.decision.totalScore);
+      const avgScore = scores.reduce((acc, value) => acc + value, 0) / scores.length;
+      windows.push({
+        start: currentWindow[0].date,
+        end: currentWindow[currentWindow.length - 1].date,
+        averageScore: Math.round(avgScore),
+        bestScore: Math.max(...scores),
+        hours: currentWindow.length,
+      });
+    }
+    currentWindow = [];
+  };
+
+  candidates.forEach((hour, index) => {
+    const previous = candidates[index - 1];
+    const isContinuous = !previous || (hour.date.getTime() - previous.date.getTime()) === 3600000;
+    const isViable = hour.decision.status !== 'NO_SALIR' && hour.decision.totalScore >= 70;
+
+    if (!isContinuous || !isViable) flush();
+    if (isViable) currentWindow.push(hour);
+  });
+
+  flush();
+
+  return windows.sort((a, b) => a.start.getTime() - b.start.getTime());
 };
