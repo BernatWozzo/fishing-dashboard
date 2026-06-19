@@ -54,7 +54,6 @@ const Dashboard = () => {
     loading,
     error,
     forecast,
-    metadata,
   } = useMarineForecast(coordinates);
 
   const evaluatedForecast = useMemo(() => forecast.map((hour) => ({
@@ -146,7 +145,6 @@ const Dashboard = () => {
           <FishingDecisionPanel
             loading={loading}
             error={error}
-            timezone={metadata.timezone}
             selectedDate={selectedDate}
             decision={selectedHourData?.decision}
             hourlyMetrics={selectedHourData}

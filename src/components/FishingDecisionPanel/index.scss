@@ -1,140 +1,230 @@
 .fishing-decision-panel {
-  margin-top: 8px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid #d7d7d7;
-  background-color: #f8f9fb;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
 
-  .decision-main {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: var(--accent);
+  }
+
+  &.state-msg {
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  &.error::before { background: var(--stop); }
+
+  .decision-hero {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-  }
+    gap: 12px;
 
-  .decision-kicker {
-    margin: 0;
-    font-size: 11px;
-    color: #555;
-  }
-
-  .decision-timezone {
-    margin: 2px 0 0;
-    font-size: 10px;
-    color: #666;
-  }
-
-  .decision-status {
-    margin: 2px 0 0;
-    font-size: 18px;
-    line-height: 1;
-  }
-
-  .decision-score {
-    text-align: right;
-    span {
-      display: block;
-      font-size: 10px;
-      color: #666;
-    }
-    strong {
-      font-size: 22px;
+    .decision-light {
+      font-size: 30px;
       line-height: 1;
+      filter: drop-shadow(0 0 10px currentColor);
     }
-  }
 
-  .decision-metrics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    .decision-hero-text {
+      flex: 1;
+      min-width: 0;
+    }
 
-    span {
+    .decision-kicker {
       margin: 0;
       font-size: 12px;
-      background-color: #fff;
-      border: 1px solid #e2e2e2;
-      border-radius: 999px;
-      padding: 4px 8px;
+      color: var(--text-dim);
+      text-transform: capitalize;
+    }
+
+    .decision-status {
+      margin: 2px 0 0;
+      font-size: 24px;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+    }
+
+    .decision-score {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 56px;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
 
       strong {
-        font-size: 12px;
+        font-size: 26px;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+
+      span {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-faint);
       }
     }
   }
 
-  .decision-reasons {
-    p {
-      margin: 0;
-      font-size: 12px;
+  .decision-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+
+    .metric {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 8px 4px;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+
+      em {
+        font-style: normal;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-faint);
+      }
+
+      strong {
+        font-size: 15px;
+        font-variant-numeric: tabular-nums;
+      }
+    }
+  }
+
+  .decision-factors {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    .factor-row {
+      display: grid;
+      grid-template-columns: 70px 1fr 28px;
+      align-items: center;
+      gap: 8px;
     }
 
-    .decision-reasons-title {
-      font-weight: 600;
-      margin-bottom: 0;
+    .factor-label {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .factor-bar {
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .factor-fill {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+
+      &.good { background: var(--go); }
+      &.mid { background: var(--warn); }
+      &.bad { background: var(--stop); }
+    }
+
+    .factor-value {
+      font-size: 12px;
+      text-align: right;
+      color: var(--text-dim);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .decision-why {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .why-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+
+      li {
+        font-size: 13px;
+        padding-left: 20px;
+        position: relative;
+        color: var(--text);
+      }
+
+      &.good li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--go);
+        font-weight: 700;
+      }
+
+      &.bad li::before {
+        content: '!';
+        position: absolute;
+        left: 4px;
+        color: var(--warn);
+        font-weight: 700;
+      }
     }
   }
 
   .decision-window {
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+
     p {
       margin: 0;
-      font-size: 12px;
-      font-weight: 500;
-    }
+      font-size: 13px;
+      font-weight: 600;
 
-    small {
-      display: block;
-      margin-top: 2px;
-      color: #606060;
-      font-size: 10px;
-    }
-  }
+      small {
+        font-weight: 400;
+        color: var(--text-dim);
+      }
 
-  &.no_salir {
-    border-color: #ff3b30;
-    background-color: #ffe8e8;
-    .decision-status,
-    .decision-score strong {
-      color: #e00000;
+      &.muted {
+        font-weight: 400;
+        color: var(--text-dim);
+      }
     }
   }
 
-  &.salida_condicional {
-    border-color: #ffcc00;
-    background-color: #fff8d6;
-    .decision-status,
-    .decision-score strong {
-      color: #c97a00;
-    }
-  }
+  &.salir::before { background: var(--go); }
+  &.salir .decision-status { color: var(--go); }
 
-  &.salir {
-    border-color: #22c55e;
-    background-color: #e5ffed;
-    .decision-status,
-    .decision-score strong {
-      color: #0f9f3f;
-    }
-  }
+  &.salida_condicional::before { background: var(--warn); }
+  &.salida_condicional .decision-status { color: var(--warn); }
 
-  &.loading,
-  &.error {
-    font-size: 14px;
-    font-weight: 500;
-  }
+  &.no_salir::before { background: var(--stop); }
+  &.no_salir .decision-status { color: var(--stop); }
 }
 
 @media (max-width: 900px) {
   .fishing-decision-panel {
-    margin-top: 6px;
-
-    .decision-status {
-      font-size: 16px;
-    }
-
-    .decision-score strong {
-      font-size: 20px;
+    .decision-hero .decision-status {
+      font-size: 22px;
     }
   }
 }

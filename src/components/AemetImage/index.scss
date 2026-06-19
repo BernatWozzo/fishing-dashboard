@@ -19,9 +19,9 @@
 }
 
 .aemet-caption {
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 11px;
-  color: #888;
+  color: var(--text-faint);
   text-transform: capitalize;
 }
 
@@ -31,10 +31,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #888;
+  color: var(--text-faint);
   font-size: 14px;
-  background: #f4f6f8;
-  border-radius: 6px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
 }
 
 .aemet-notice {
@@ -42,14 +42,14 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 14px;
-  border-radius: 6px;
-  background: #eef2f5;
-  border: 1px dashed #c4cdd5;
-  color: #555;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px dashed var(--border-strong);
+  color: var(--text-dim);
 
   strong {
-    color: #333;
+    color: var(--text);
   }
 
   span {
@@ -57,11 +57,11 @@
   }
 
   &.warning {
-    background: #fff8e6;
-    border-color: #f0d48a;
+    background: var(--warn-bg);
+    border-color: rgba(251, 191, 36, 0.4);
 
     strong {
-      color: #8a6d1a;
+      color: var(--warn);
     }
   }
 }

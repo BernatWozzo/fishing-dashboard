@@ -121,6 +121,57 @@ export const evaluateOffshoreHour = (hourlyData, date, thresholds = OFFSHORE_THR
   };
 };
 
+// Convierte las métricas de una hora en explicación en lenguaje natural.
+// Devuelve { positives: string[], negatives: string[] } para mostrar el "por qué".
+export const explainDecision = (hourlyData, date = hourlyData.date) => {
+  const positives = [];
+  const negatives = [];
+
+  const wave = hourlyData.waveHeightMeters;
+  const gust = hourlyData.windGustKnots;
+  const wind = hourlyData.windSpeedKnots;
+  const storm = hourlyData.stormProbability;
+  const dir = hourlyData.windDirectionDegrees;
+  const vis = hourlyData.visibilityKilometers;
+
+  // Mar / olas
+  if (typeof wave === 'number') {
+    if (wave <= OFFSHORE_THRESHOLDS.maxWaveHeightMeters) positives.push(`Mar plano (${wave.toFixed(1)} m)`);
+    else if (wave <= 0.6) negatives.push(`Marejadilla (${wave.toFixed(1)} m)`);
+    else negatives.push(`Mar movido (${wave.toFixed(1)} m)`);
+  }
+
+  // Rachas
+  if (typeof gust === 'number') {
+    if (gust > OFFSHORE_THRESHOLDS.maxWindGustKnots) negatives.push(`Rachas fuertes (${Math.round(gust)} kt)`);
+    else if (gust > 18) negatives.push(`Rachas moderadas (${Math.round(gust)} kt)`);
+    else positives.push(`Viento contenido (rachas ${Math.round(gust)} kt)`);
+  }
+
+  // Dirección del viento
+  if (typeof dir === 'number' && typeof wind === 'number') {
+    if (isNorthToNortheastWind(dir) && wind <= 16) positives.push('Viento de componente norte, te favorece');
+    else if (isSouthernWind(dir) && wind > 8) negatives.push('Viento de componente sur, menos favorable');
+  }
+
+  // Tormenta
+  if (typeof storm === 'number') {
+    if (storm > OFFSHORE_THRESHOLDS.maxStormProbability) negatives.push(`Riesgo de tormenta alto (${Math.round(storm)} %)`);
+    else if (storm > 10) negatives.push(`Algo de riesgo de chubascos (${Math.round(storm)} %)`);
+    else positives.push('Cielo estable, sin tormenta');
+  }
+
+  // Visibilidad
+  if (typeof vis === 'number' && vis < 4) negatives.push(`Visibilidad reducida (${vis.toFixed(1)} km)`);
+
+  // Luna / actividad
+  const activity = getLunarActivityScore(date);
+  if (activity >= 70) positives.push('Buena actividad por fase lunar');
+  else if (activity <= 45) negatives.push('Actividad lunar baja');
+
+  return { positives, negatives };
+};
+
 export const findBestWindow = (forecast, startDate, minWindowHours = 4) => {
   if (!forecast || forecast.length === 0) return null;
 
